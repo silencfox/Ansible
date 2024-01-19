@@ -1,0 +1,9 @@
+- name: Ejecutar PowerShell en máquina virtual de VMware
+  #hosts: windows_vmware
+  hosts: win100
+  tasks:
+    - name: Ejecutar comando de PowerShell
+      ansible.windows.win_shell: |
+        Get-Process | Sort-Object CPU -Descending | Select-Object -First 5
+        New-Item -Path C:\prueba\ -Name autonomo.txt -ItemType file -Value This_is_a_text_create_from_ansible   
+  

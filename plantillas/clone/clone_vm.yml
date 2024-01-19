@@ -1,0 +1,48 @@
+---
+- hosts: vcenter-server
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Create VM template
+      vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: no
+        datacenter: "{{ datacenter }}"
+        folder: "{{ template_folder }}"
+        name: "{{ template_name }}"
+        state: present
+        template: yes
+        guest_id: "{{ guest_id }}"
+        hardware:
+          memory_mb: "{{ memory_mb }}"
+          num_cpus: "{{ num_cpus }}"
+          scsi: "{{ scsi }}"
+          network_interfaces: "{{ network_interfaces }}"
+          cdrom:
+            iso_path: "{{ iso_path }}"
+            start_connected: "{{ iso_start_connected }}"
+      delegate_to: localhost
+
+    - name: Clone VM from template
+      vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: no
+        datacenter: "{{ datacenter }}"
+        folder: "{{ clone_folder }}"
+        name: "{{ clone_name }}"
+        state: present
+        template: "{{ template_name }}"
+        cluster: "{{ cluster }}"
+        datastore: "{{ datastore }}"
+        disk:
+          size_gb: "{{ disk_size_gb }}"
+          type: "{{ disk_type }}"
+        hardware:
+          memory_mb: "{{ memory_mb }}"
+          num_cpus: "{{ num_cpus }}"
+          network_interfaces: "{{ network_interfaces }}"
+      delegate_to: localhost

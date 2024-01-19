@@ -12,6 +12,14 @@
 | ANSIBLE_REQUIREMENTS | requirements.yml | install ansible galaxy roles requirements   |
 | DEPLOY_KEY           |                  | pass an SSH private key to use in container |
 
+### Mitogen
+
+To enable mitogen, add this configuration into defaults in defaults.cfg file
+```
+action_plugins = ~/.ansible/plugins/action:/usr/share/ansible/plugins/action
+strategy_plugins = /opt/mitogen/ansible_mitogen/plugins/strategy
+strategy = mitogen_linear
+```
 
 ### Run Playbook
 
@@ -31,6 +39,12 @@ docker run -it --rm \
   ansible-galaxy init role-name
 ```
 
+### Lint Role
+
+```
+docker run -it --rm pad92/ansible-alpine:latest \
+  -v ${PWD}:/ansible ansible-playbook tests/playbook.yml --syntax-check
+```
 ### Run with forwarding ssh agent
 
 ```
@@ -53,7 +67,20 @@ oracleLinux7_64Guest	Oracle 7 (64-bit)
 oracleLinux8_64Guest	Oracle 8 (64-bit)
 
 
+## How push images
+docker login -u silencfox --password-stdin
 
+docker images
+
+#REPOSITORY              		TAG       IMAGE ID         CREATED           SIZE
+#docker-ansible-alpine-ansible	latest    30fb66c9b1ad     3 minutes ago     1.975 GB
+#verse_gapminder         		latest    bb38976d03cf     13 minutes ago    1.955 GB
+#rocker/verse            		latest    0168d115f220     3 days ago        1.954 GB
+
+docker tag 5626771dafd3 silencfox/ansible:arm64
+docker push silencfox/ansible:arm64
+
+docker pull silencfox/ansible
 
 ###Correr imagen desde composer
 docker compose -f docker-compose.yml up -d
@@ -63,7 +90,8 @@ docker build . -t ansipine:1.0.0
 
 ### abrir bash 
 docker run -it --rm silencfox/ansible:latest /bin/sh
-
+docker run -it --rm silencfox-ansible-ansible:latest /bin/sh
+docker run -it --rm ansipine:1.0.0
 
 ansible-playbook -i plantillas/inventary/win/hosts2.yml plantillas/clonewin/tpl_clone.yml
 
@@ -72,7 +100,7 @@ docker exec -it --user=root b714c28179b4 sh
 
 
 ### correr una plantilla
-docker run -it --rm -v silencfox/ansible:/ansible/plantillas silencfox/ansible:latest ansible-playbook -i inventory playbook.yml
+docker run -it --rm -v docker-ansible-alpine_my-app:/ansible/plantillas silencfox/ansible:latest ansible-playbook -i inventory playbook.yml
 
 ### hacer ping 
 ansible web -m ping -i plantillas/inventory.txt
@@ -87,6 +115,15 @@ apk upgrade --available && sync
 
 ### guardar cambios de un contenedor a una imagen
 docker commit -a “Kelvin Alcala” -m ”Agregando dependencia Vmware y Pure Storage” ansible silencfox/ansible:0.1
+
+### exportar imagen
+docker save -o C:\Repos\ansipine.tar d5dcecd2b275
+### importar imagen
+docker load -i C:\Repos\ansipine.tar
+
+### eliminar todos los contenedores e imagenes
+docker system prune -a
+docker system prune --volumes
 
 ### Copiar archivo DOcker
 

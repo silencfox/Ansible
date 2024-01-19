@@ -1,0 +1,25 @@
+- name: Replace string windows server
+  hosts: all
+  tasks:
+    - name: Replace string windows server
+      win_lineinfile:
+        #path: 'your/path/to/file.ext'
+        path: 'C:/prueba/autonomo.txt'
+        # Line to Search/Match against
+        regexp: '(^linea4)'
+        #regexp: '{{item.From}}'
+        # Line to Replace with
+        #line: '{{item.To}}'
+        line: 'linea1'
+        backup: yes
+        backrefs: yes
+      check_mode: yes
+      register: example1out
+
+
+    - name: Print return information from the previous task
+      ansible.builtin.debug:
+        var: example1out
+        verbosity: 2
+        msg:
+            - "Provisioning based on YOUR_KEY which is: "       

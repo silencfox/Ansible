@@ -1,0 +1,30 @@
+---
+- name: Take Pure Storage volume snapshot and mount on VMware
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Take Pure Storage volume snapshot
+      purefa_flasharray_info:
+        target: <Pure Storage FlashArray IP>
+        username: <Pure Storage username>
+        password: <Pure Storage password>
+      register: flasharray_info
+
+    - name: Retrieve the latest snapshot
+      purefa_snapshot_info:
+        target: <Pure Storage FlashArray IP>
+        username: <Pure Storage username>
+        password: <Pure Storage password>
+        volume: <volume_name>
+        latest: true
+      register: snapshot_info
+
+    - name: Mount snapshot on VMware datastore
+      vmware_vm_shell:
+        hostname: <VMware ESXi host IP>
+        username: <VMware ESXi username>
+        password: <VMware ESXi password>
+        vm_id: <VMware virtual machine ID>
+        cmd: "vmkfstools -i '/vmfs/volumes/<datastore>/{{ snapshot_info.snapshots[0].name }}' '/vmfs/volumes/<datastore>/<new_vm_disk_name>.vmdk'"
+        esxi_transport: ssh
+      delegate_to: localhost

@@ -1,0 +1,52 @@
+---
+- name: info vm demo
+  hosts: localhost
+  become: false
+  gather_facts: false
+  collections:
+    - community.vmware
+  pre_tasks:
+    - include_vars: vars.yml
+
+  tasks:
+    - name: 'Gather info about vCenter settings'
+      community.vmware.vmware_vcenter_settings_info:
+        hostname: '{{ vcenter_hostname }}'
+        username: '{{ vcenter_username }}'
+        password: '{{ vcenter_password }}'
+        validate_certs: '{{ vcenter_validate_certs }}'  
+      register: vcenter_settings_info        
+
+    - name: print vCenter settings
+      ansible.builtin.debug:
+        var: vcenter_settings_info       
+
+    - name: Gather vSphere schema information
+      community.vmware.vmware_datacenter_info:
+        hostname: '{{ vcenter_hostname }}'
+        username: '{{ vcenter_username }}'
+        password: '{{ vcenter_password }}'
+        datacenter: '{{ vcenter_datacenter }}'
+        validate_certs: '{{ vcenter_validate_certs }}'
+        schema: vsphere
+        properties:
+        - configStatus
+        - overallStatus
+      register: vsphere_info        
+
+    - name: print vsphere info
+      ansible.builtin.debug:
+        var: vsphere_info 
+
+    - name: Gather information about all datacenters
+      community.vmware.vmware_datacenter_info:
+        hostname: '{{ vcenter_hostname }}'
+        username: '{{ vcenter_username }}'
+        password: '{{ vcenter_password }}'
+        validate_certs: '{{ vcenter_validate_certs }}'
+      delegate_to: localhost            
+      register: vcenter_datacenter       
+
+    - name: print vCenter datacenter
+      ansible.builtin.debug:
+        var: vcenter_datacenter       

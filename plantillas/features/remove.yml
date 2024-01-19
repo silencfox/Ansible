@@ -1,0 +1,5 @@
+- name: Uninstall a package and dependencies
+  win_chocolatey:
+    name: audacity-lame
+    remove_dependencies: yes
+    state: absent

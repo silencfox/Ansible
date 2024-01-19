@@ -1,0 +1,23 @@
+---
+- name: info vm demo
+  hosts: localhost
+  become: false
+  gather_facts: false
+  collections:
+    #- vmware.vmware_rest_api
+    - community.vmware
+  pre_tasks:
+    - include_vars: vars.yml
+
+  tasks:
+    - name: Rescan for new VMFS Volumes in a given cluster, but do not scan for new Devices - all found hosts will be scanned
+      community.vmware.vmware_host_scanhba:
+        hostname: '{{ vcenter_hostname }}'
+        username: '{{ vcenter_username }}'
+        password: '{{ vcenter_password }}'
+        esxi_hostname: '{{ inventory_hostname }}'
+        validate_certs: "{{ vcenter_validate_certs }}"  
+        rescan_vmfs: true
+        refresh_storage: true  
+        rescan_hba: true
+      delegate_to: localhost

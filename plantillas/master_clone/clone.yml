@@ -1,0 +1,64 @@
+---
+- name: Clone a virtual machine from Windows template and customize
+  community.vmware.vmware_guest:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: '{{ vcenter_validate_certs }}'
+    datacenter: "{{ vcenter_datacenter }}"
+    esxi_hostname: "{{ vmware_host01 }}"
+    folder: "{{ vm_folder }}"
+    name: "{{ vm_name_dst }}"
+    template: "{{ vm_name_src }}"
+    state: poweredon
+    datastore: "{{ datastore_name }}"
+    convert: thin  
+    #disk:
+    #  - type: thin
+    #    size_gb: 50
+    #    datastore: ""
+    #    autoselect_datastore: true
+    hardware:
+      memory_mb: '{{ vm_memory_mb }}'
+      num_cpus: '{{ vm_cpus }}'
+      scsi: paravirtual
+    networks:
+    - name: '{{ vlan_name }}'
+      ip: 10.0.0.5
+      netmask: 255.255.255.0
+      gateway: 10.0.0.1
+      mac: aa:bb:dd:aa:00:14
+      #domain: my_domain
+      dns_servers:
+      - 10.0.0.1
+      - 8.8.8.8
+    #- vlan: 0
+      type: static
+      #device_type: 'vmxnet3'
+      connected: true  
+    customization:
+      hostname: 'WebServer'
+      orgname: 'BSC'
+      joinworkgroup: 'BSC_Group'    
+      autologon: yes
+      autologoncount: 1
+      dns_servers:
+      - 10.0.0.1
+      - 8.8.8.8
+      #domain: my_domain
+      password: password
+      runonce:
+        #commandList:
+          ## Si no funciona simplemente quitar commandlist y dejar la lista por debajo de runonce
+        - powershell.exe -ExecutionPolicy Bypass -Command "Powershell.exe Enable-PSRemoting –Force"
+        - powershell.exe -ExecutionPolicy Bypass -Command "Powershell.exe Set-WSManQuickConfig -Force"
+        - powershell.exe -ExecutionPolicy Bypass -Command "Powershell.exe Set-Item WSMan:\localhost\Shell\MaxMemoryPerShellMB 1024"
+        - powershell.exe -ExecutionPolicy Bypass -Command "Powershell.exe Set-Item WSMan:\localhost\Service\AllowUnencrypted -Value $True"
+      #- powershell.exe -ExecutionPolicy Unrestricted -File C:\Windows\Temp\ConfigureRemotingForAnsible.ps1 -ForceNewSSLCert -EnableCredSSP
+        - powershell.exe -ExecutionPolicy Unrestricted -command "& New-Item -Path 'C:\' -Name 'autonomo.txt' -ItemType 'file' -Value 'This is a text create from ansible.'"
+        - powershell.exe -ExecutionPolicy Unrestricted -command "& New-Item -Path 'C:\' -Name 'autonomo2.txt' -ItemType 'file' -Value 'This is a text create from ansible.'"
+        - powershell.exe -ExecutionPolicy Unrestricted -File C:\Windows\Temp\ConfigureRemotingForAnsible.ps1 -ForceNewSSLCert -EnableCredSSP
+  delegate_to: localhost
+
+          
+

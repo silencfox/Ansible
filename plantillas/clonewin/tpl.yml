@@ -1,0 +1,22 @@
+---
+- name: Convertir VM a template en VMware vSphere
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  pre_tasks:
+    - include_vars: ../vcenter/vars.yml
+  vars:
+    tpl_folder: "F_BACKUPS"
+    vm_name: "mi_vm"
+        
+  tasks:        
+    - name: Convertir VM a template en VMware vSphere
+      vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: '{{ vcenter_validate_certs }}'
+        datacenter: "{{ vcenter_datacenter }}"
+        folder: "{{ tpl_folder }}"
+        name: "{{ vm_name }}"
+        is_template: yes

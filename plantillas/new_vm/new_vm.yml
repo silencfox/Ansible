@@ -1,0 +1,65 @@
+---
+- name: Crear máquina virtual en VMware
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  pre_tasks:
+    - include_vars: ../vcenter/vars.yml
+  vars:
+    datastore_name: 'DS_FAC_DEVQA_19_REPO'
+    vm_name: 'mi_vm'
+    vm_folder: 'F_BACKUPS'
+    vm_guest_id: 'windows9_64Guest'
+    vm_cpus: 2
+    vm_memory_mb: 2048
+    vm_disk_size_gb: 20
+    vlan_name: 'VL_DEVQA' 
+    #cdrom_path: '[datastore1] ISOs/Windows10.iso'
+  tasks:
+  - name: Crear máquina virtual
+    vmware_guest:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: '{{ vcenter_validate_certs }}'
+      datacenter: '{{ vcenter_datacenter }}'
+      folder: '{{ vm_folder }}'
+      name: '{{ vm_name }}'
+      guest_id: '{{ vm_guest_id }}'
+      cdrom:
+        state: present
+        #iso_path: '{{ cdrom_path }}'
+        start_connected: no
+        type: client      
+      networks:
+      - name: '{{ vlan_name }}'
+        ip: 192.168.1.100
+        netmask: 255.255.255.0
+        gateway: 192.168.1.1
+        mac: aa:bb:dd:aa:00:14
+        #domain: my_domain
+        dns_servers:
+        - 192.168.1.1
+        - 192.168.1.2
+      #- vlan: 0
+        type: static      
+      hardware:
+        boot_firmware: efi
+        secure_boot: true
+        #version: 15
+        #vpmc_enabled: true
+        hotadd_cpu: true
+        hotadd_memory: true
+        #hotremove_cpu: true
+        #num_cpu_cores_per_socket: 1  
+        memory_mb: '{{ vm_memory_mb }}'
+        num_cpus: '{{ vm_cpus }}'
+        scsi: paravirtual
+      disk:
+        - size_gb: '{{ vm_disk_size_gb }}'
+          type: thin
+          datastore: '{{ datastore_name }}'
+          #autoselect_datastore: true           
+      #datastore: '{{ datastore_name }}'
+      state: poweredoff
+

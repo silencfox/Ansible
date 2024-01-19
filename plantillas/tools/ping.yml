@@ -1,0 +1,6 @@
+---
+- name: Ping server
+  hosts: your_server_hostname
+  tasks:
+    - name: Ping server
+      ping:

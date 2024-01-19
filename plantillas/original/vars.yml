@@ -1,0 +1,6 @@
+vcenter_hostname: "10.0.0.103"
+vcenter_datacenter: "Datacenter"
+vcenter_validate_certs: false
+vcenter_username: "administrator@vsphere.local"
+vcenter_password: "administrator"
+vm_name: "vcenter"

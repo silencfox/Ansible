@@ -1,0 +1,5 @@
+vmware_hostname: "192.168.15.141"
+vmware_username: "administrator@vsphere.local"
+vmware_password: "administrator"
+vmware_datacenter: "Datacenter"
+vmware_host: "192.168.15.143"

@@ -1,0 +1,57 @@
+---
+- name: Crear volumen y presentarlo en VMware
+  hosts: purestorage, vmware
+  gather_facts: no
+
+  vars:
+    purestorage_source_snapshot_name: "nombre_del_snapshot"
+    purestorage_source_volume_name: "nombre_del_volumen"
+    purestorage_destination_volume_name: "nombre_del_volumen_creado"
+    purestorage_destination_host_name: "nombre_del_servidor_VMware"
+    purestorage_destination_host_hba_id: "ID_HBA_del_servidor_VMware"
+
+  tasks:
+    - name: Obtener información del snapshot de Pure Storage
+      purefa_snapshot_info:
+        snapshot: "{{ purestorage_source_snapshot_name }}"
+        volume: "{{ purestorage_source_volume_name }}"
+      register: snapshot_info
+
+    - name: Crear volumen a partir del snapshot
+      purefa_volume:
+        state: present
+        name: "{{ purestorage_destination_volume_name }}"
+        source: "{{ purestorage_source_volume_name }}"
+        snap: "{{ purestorage_source_snapshot_name }}"
+        size: "{{ snapshot_info.snap_size_total }}"
+        host: "{{ purestorage_destination_host_name }}"
+        hgroup: "{{ purestorage_destination_host_hba_id }}"
+      register: volume_info
+
+    - name: Esperar a que el volumen esté conectado al host VMware
+      wait_for:
+        host: "{{ purestorage_destination_host_name }}"
+        port: 6000
+        state: started
+
+    - name: Agregar disco al servidor VMware
+      vmware_guest_disk:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: no
+        datacenter: "{{ datacenter_name }}"
+        name: "{{ purestorage_destination_host_name }}"
+        scsi_controller: "{{ scsi_controller }}"
+        unit_number: "{{ unit_number }}"
+        size_gb: "{{ snapshot_info.snap_size_total }}"
+      register: disk_info
+
+    - name: Obtener el nombre del dispositivo del disco agregado al servidor VMware
+      set_fact:
+        device_name: "{{ disk_info.disk }}"
+
+    - name: Escribir el nombre del dispositivo del disco agregado al servidor VMware en un archivo
+      copy:
+        content: "{{ device_name }}"
+        dest: "/tmp/disk_device_name.txt"

@@ -1,0 +1,9 @@
+---
+- name: win_copy module demo
+  hosts: all
+  become: false
+  gather_facts: false
+  tasks:
+    - name: Install notepadplusplus version 6.6
+      win_chocolatey:
+        name: git

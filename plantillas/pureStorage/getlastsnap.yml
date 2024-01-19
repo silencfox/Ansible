@@ -1,0 +1,24 @@
+---
+- hosts: localhost
+  gather_facts: True
+  become: True
+  collections:
+    - purestorage.flasharray  
+  pre_tasks:
+    - include_vars: ../vcenter/vars.yml
+  tasks:
+  - name: Obtener información del último snapshot de un volumen
+    purefa_volume_info:
+      name: "VG-FAC-DEVQA/VT_VMW_DPLY"
+      snap: ".*"
+      fa_url: "{{ fa_url }}"
+      api_token: "{{ fa_api }}"    
+    register: volume_info
+    
+
+  - name: Obtener el último snapshot del volumen
+    set_fact:
+      last_snapshot: "{{ volume_info.snapshots | sort(attribute='created') | last }}"
+
+  - debug:
+      var: last_snapshot.name

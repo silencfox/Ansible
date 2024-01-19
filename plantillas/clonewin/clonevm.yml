@@ -1,0 +1,54 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  vars:
+    vcenter_hostname: "192.168.15.141"
+    vcenter_username: "administrator@vsphere.local"
+    vcenter_password: "administrator"
+    datacenter: "Datacenter"
+    #cluster: "cluster1"
+    datastore: "DST_TEST_01"
+    clone_folder: "/Staging"
+    guest_name: "webserver"
+    guest_template: "Windows10Template"
+    vmware_host: "192.168.15.143"
+    guest_networks:
+      - label: "VM Network"
+        vlan: "0"
+
+  tasks:
+    - name: Clone a virtual machine from Windows template and customize
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: no
+        datacenter: "{{ datacenter }}"
+        esxi_hostname: "{{ vmware_host }}"
+        folder: "{{ clone_folder }}"
+        name: testvm-2
+        template: "{{ guest_template }}"
+        networks:
+        - name: VM Network
+          ip: 192.168.1.100
+          netmask: 255.255.255.0
+          gateway: 192.168.1.1
+          mac: aa:bb:dd:aa:00:14
+          domain: my_domain
+          dns_servers:
+          - 192.168.1.1
+          - 192.168.1.2
+        #- vlan: 0
+          type: static
+        customization:
+          autologon: yes
+          autologoncount: 1
+          dns_servers:
+          - 192.168.1.1
+          - 192.168.1.2
+          domain: my_domain
+          password: new_vm_password
+          runonce:
+          - powershell.exe -ExecutionPolicy Unrestricted -File C:\Windows\Temp\ConfigureRemotingForAnsible.ps1 -ForceNewSSLCert -EnableCredSSP
+      delegate_to: localhost

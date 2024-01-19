@@ -1,0 +1,9 @@
+- name: Hacer ping a una máquina con Windows
+  hosts: all
+  become: false
+  gather_facts: false
+  tasks:
+    - name: Enviar solicitud de ping a la máquina con Windows
+      ansible.windows.win_ping:
+##  How To
+##  ansible-playbook tools/pingwin.yml -i tools/hosts2.yml

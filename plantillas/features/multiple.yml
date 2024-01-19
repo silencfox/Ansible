@@ -1,0 +1,8 @@
+- name: Install multiple packages sequentially
+  win_chocolatey:
+    name: '{{ item }}'
+    state: present
+  loop:
+  - procexp
+  - putty
+  - windirstat

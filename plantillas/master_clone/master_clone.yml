@@ -1,0 +1,69 @@
+---
+- name: Execute multiple playbooks
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  pre_tasks:
+    - include_vars: ../vcenter/vars.yml
+
+  vars:
+    #cluster: "cluster1"
+    datastore_name: 'DST_720G'
+    tpl_folder: "/vm"
+    vm_folder: "/vm"
+    #guest_template: "mi_vm"
+    vm_name_src: "webserver"
+    vm_name_dst: "new_vm"
+    vm_cpus: 1
+    vm_memory_mb: 1024
+    vlan_name: 'VM Network'
+    guest_networks:
+      - label: "VM Network"
+        vlan: "0"
+
+  tasks:
+    - name: Convertir VM a template en VMware vSphere
+      #include: template.yml
+      include_tasks: template.yml
+      vars:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: '{{ vcenter_validate_certs }}'
+        datacenter: "{{ vcenter_datacenter }}"
+        folder_tpl: "{{ tpl_folder }}"
+        name_tpl: "{{ vm_name_src }}"
+
+
+    - name: Clone a virtual machine from Windows template and customize
+      include: clone.yml
+      vars:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: '{{ vcenter_validate_certs }}'
+        datacenter: "{{ vcenter_datacenter }}"
+        datastore_name: 'DST_720G'
+        tpl_folder: "/vm"
+        vm_folder: "/vm"
+        #guest_template: "mi_vm"
+        vm_name_src: "webserver"
+        vm_name_dst: "new_vm"
+        vm_cpus: 1
+        vm_memory_mb: 1024
+        vlan_name: 'VM Network'
+        guest_networks:
+          - label: "VM Network"
+            vlan: "0"
+            
+    - name: Ejecutar PowerShell en máquina virtual de VMware
+      include: pwsh.yml
+      vars:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: '{{ vcenter_validate_certs }}'
+        datacenter: "{{ vcenter_datacenter }}"
+
+
+

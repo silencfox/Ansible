@@ -1,0 +1,26 @@
+version: "1.2"
+services:
+  ansible:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VCS_REF: 'git rev-parse --short HEAD'
+        BUILD_DATE: 'date -u +”%Y-%m-%dT%H:%M:%SZ”'
+        ANSIBLE_VERSION: "7.5.0"
+        ANSIBLE_LINT_VERSION: "6.15.0"
+        MITOGEN_VERSION: "0.3.3"
+        IMAGE_NAME: "silencfox/ansible:7.5"
+    container_name: ansible
+    hostname: ansible       
+    stdin_open: true 
+    tty: true         
+    ports:
+      - "3000:3000"
+      - "3022:22"
+    volumes:
+      - my-app:/ansible/plantillas
+
+# Names our volume
+volumes:
+  my-app:  

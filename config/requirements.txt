@@ -1,0 +1,9 @@
+pip
+cffi
+PyVmomi
+pywinrm
+requests
+ansible
+purestorage
+py-pure-client
+jmespath

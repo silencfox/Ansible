@@ -1,0 +1,27 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+    vcenter_server: "10.0.0.103"
+    vcenter_user: "administrator@vsphere.local"
+    vcenter_pass: "administrator"
+    datacenter_name: "Datacenter"
+    vm_name: "new_vm"
+    vm_username: "administrator"
+    vm_password: "password"
+  tasks:
+  - name: Create directory inside a vm
+    vmware_guest_file_operation:
+         hostname: "{{ vcenter_server }}"
+         username: "{{ vcenter_user }}"
+         password: "{{ vcenter_pass }}"
+         datacenter: "{{ datacenter_name }}"
+         validate_certs: no
+         vm_id: "{{ vm_name }}"
+         vm_username: "{{ vm_username }}"
+         vm_password: "{{ vm_password }}"
+         copy:
+             src: "/ansible/File.7z"
+             dest: C:\Testowy0000\File.7z
+             overwrite: False
+    delegate_to: localhost

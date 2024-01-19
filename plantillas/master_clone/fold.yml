@@ -1,0 +1,29 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+    vcenter_server: "10.0.0.103"
+    vcenter_user: "administrator@vsphere.local"
+    vcenter_pass: "administrator"
+    datacenter_name: "Datacenter"
+    cluster_name: "Cluster_name"
+    vm_name: "new_vm"
+    vm_username: "administrator"
+    vm_password: "password"
+    path: C:\Testowy0000
+  tasks:
+  - name: Create directory inside a vm
+    vmware_guest_file_operation:
+         hostname: "{{ vcenter_server }}"
+         username: "{{ vcenter_user }}"
+         password: "{{ vcenter_pass }}"
+         datacenter: "{{ datacenter_name }}"
+         validate_certs: no
+         vm_id: "{{ vm_name }}"
+         vm_username: "{{ vm_username }}"
+         vm_password: "{{ vm_password }}"
+         directory:
+          path: "{{ path }}"
+          operation: create
+          recurse: no
+    delegate_to: localhost

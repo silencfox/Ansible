@@ -1,0 +1,19 @@
+version: "1.2"
+services:
+  ansible:
+    build:
+      context: .
+      dockerfile: Dockerfile2ARM
+    container_name: ansible
+    hostname: ansible       
+    stdin_open: true 
+    tty: true         
+    ports:
+      - "3000:3000"
+      - "3022:22"
+    volumes:
+      - my-app:/ansible/plantillas
+
+# Names our volume
+volumes:
+  my-app:  
