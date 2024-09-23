@@ -1,16 +1,11 @@
 # Docker-Ansible base image
 
-[![Layers](https://images.microbadger.com/badges/image/pad92/ansible-alpine.svg)](https://microbadger.com/images/pad92/ansible-alpine) [![GitHub issues](https://img.shields.io/github/issues/pad92/docker-ansible-alpine.svg)](https://github.com/pad92/docker-ansible-alpine) [![Docker Automated build](https://img.shields.io/docker/automated/pad92/ansible-alpine.svg?maxAge=2592000)](https://hub.docker.com/r/pad92/ansible-alpine/) [![Docker Build Status](https://img.shields.io/docker/build/pad92/ansible-alpine.svg?maxAge=2592000)](https://hub.docker.com/r/pad92/ansible-alpine/) [![Docker Pulls](https://img.shields.io/docker/pulls/pad92/ansible-alpine.svg)](https://hub.docker.com/r/pad92/ansible-alpine/)
-
+![Pipeline](https://gitlab.com/pad92/docker-ansible-alpine/badges/master/pipeline.svg)
+![version](https://img.shields.io/docker/v/pad92/ansible-alpine?sort=semver)
+[![Docker Pulls](https://img.shields.io/docker/pulls/pad92/ansible-alpine)](https://hub.docker.com/r/pad92/ansible-alpine/)
+![Docker Image Size](https://img.shields.io/docker/image-size/pad92/ansible-alpine/latest)
+![Docker Stars](https://img.shields.io/docker/stars/pad92/ansible-alpine)
 ## Usage
-
-
-####  Manual install
-### Download all requiriment without install
-python3 -m pip download -r requirements.txt --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --dest ./
-### Install all requiriment 
-python3 -m pip install --no-index --find-links=/azure/ansible/requeriments/ -r requirements.txt
-
 
 ### Environnement variable
 
@@ -22,16 +17,19 @@ python3 -m pip install --no-index --find-links=/azure/ansible/requeriments/ -r r
 
 ### Mitogen
 
-To enable mitogen, add this configuration into defaults in defaults.cfg file
-```
-action_plugins = ~/.ansible/plugins/action:/usr/share/ansible/plugins/action
-strategy_plugins = /opt/mitogen/ansible_mitogen/plugins/strategy
+To enable mitogen, add this configuration into defaults in ansible.cfg file
+
+```cfg
+[defaults]
+strategy_plugins = /usr/lib/python3.11/site-packages/ansible_mitogen/plugins/strategy
 strategy = mitogen_linear
 ```
 
+Full documentation : https://mitogen.networkgenomics.com/ansible_detailed.html
+
 ### Run Playbook
 
-```
+```sh
 docker run -it --rm \
   -v ${PWD}:/ansible \
   pad92/ansible-alpine:latest \
@@ -40,7 +38,7 @@ docker run -it --rm \
 
 ### Generate Base Role structure
 
-```
+```sh
 docker run -it --rm \
   -v ${PWD}:/ansible \
   pad92/ansible-alpine:latest \
@@ -49,13 +47,13 @@ docker run -it --rm \
 
 ### Lint Role
 
-```
+```sh
 docker run -it --rm pad92/ansible-alpine:latest \
   -v ${PWD}:/ansible ansible-playbook tests/playbook.yml --syntax-check
 ```
 ### Run with forwarding ssh agent
 
-```
+```sh
 docker run -it --rm \
   -v $(readlink -f $SSH_AUTH_SOCK):/ssh-agent \
   -v ${PWD}:/ansible \
