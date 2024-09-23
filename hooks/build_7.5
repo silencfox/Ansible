@@ -6,6 +6,6 @@ docker build --build-arg VCS_REF=`git rev-parse --short HEAD` \
              --build-arg ANSIBLE_VERSION=${ANSIBLE_VERSION:=7.5.0} \
              --build-arg ANSIBLE_LINT_VERSION=${ANSIBLE_LINT_VERSION:=6.15.0} \
              --build-arg MITOGEN_VERSION=${MITOGEN_VERSION:=0.3.3} \
-             -t ${IMAGE_NAME:=silencfox/ansible-alpine:7.5} .
-docker tag silencfox/ansible-alpine:7.5 silencfox/ansible-alpine:latest
+             -t ${IMAGE_NAME:=silencfox/ansible:7.5} .
+docker tag silencfox/ansible:7.5 silencfox/ansible:latest
 

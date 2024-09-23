@@ -1,8 +1,8 @@
 plugin: vmware_vm_inventory
 strict: False
 hostname: 10.0.0.101
-username: administrator@vsphere.local
-password: Servidores@2021
+username: 
+password: 
 validate_certs: False
 with_tags: False
 groups:

@@ -1,3 +1,0 @@
-FROM silencfox-ansible-ansible:latest AS final
-COPY ./plantillas /ansible/plantillas/
-CMD ["/bin/sh"]

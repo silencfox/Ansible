@@ -14,8 +14,7 @@ WORKDIR /ansible
 ENTRYPOINT ["entrypoint.sh"]
 
 # default command: display Ansible version
-#CMD [ "ansible-playbook", "--version" ]
-CMD ["/bin/sh"]
+CMD [ "ansible-playbook", "--version" ]
 
 
 
