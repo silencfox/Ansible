@@ -8,7 +8,7 @@
 
   vars:
     #cluster: "cluster1"
-    datastore_name: 'DST_10000G'
+    datastore_name: 'DST_720G'
     tpl_folder: "/vm"
     vm_folder: "/vm"
     #guest_template: "mi_vm"
@@ -43,7 +43,7 @@
         password: "{{ vcenter_password }}"
         validate_certs: '{{ vcenter_validate_certs }}'
         datacenter: "{{ vcenter_datacenter }}"
-        datastore_name: 'DST_1000G'
+        datastore_name: 'DST_720G'
         tpl_folder: "/vm"
         vm_folder: "/vm"
         #guest_template: "mi_vm"

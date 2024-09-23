@@ -4,14 +4,6 @@
 
 ## Usage
 
-
-####  Manual install
-### Download all requiriment without install
-python3 -m pip download -r requirements.txt --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --dest ./
-### Install all requiriment 
-python3 -m pip install --no-index --find-links=/azure/ansible/requeriments/ -r requirements.txt
-
-
 ### Environnement variable
 
 | Variable             | Default Value    | Usage                                       |

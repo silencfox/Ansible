@@ -24,29 +24,29 @@
       scsi: paravirtual
     networks:
     - name: '{{ vlan_name }}'
-      ip: 10.0.0.5
-      netmask: 255.255.255.0
-      gateway: 10.0.0.1
-      mac: aa:bb:dd:aa:00:14
+      ip: '{{ ip }}'
+      netmask: '{{ netmask }}'
+      gateway: '{{ gateway }}'
+      #mac: aa:bb:dd:aa:00:14
       #domain: my_domain
       dns_servers:
-      - 10.0.0.1
-      - 8.8.8.8
+      - "{{ dns01 }}"
+      - "{{ dns02 }}"
     #- vlan: 0
       type: static
       #device_type: 'vmxnet3'
       connected: true  
     customization:
-      hostname: 'WebServer'
-      orgname: 'JD3'
-      joinworkgroup: 'JD3_Group'    
-      autologon: yes
-      autologoncount: 1
+      hostname: "{{ winhostname }}"
+      orgname: '{{ orgname }}'
+      joinworkgroup: '{{ joinworkgroup }}'    
+      autologon: '{{ autologon }}'
+      autologoncount: '{{ autologoncount }}'
       dns_servers:
-      - 10.0.0.1
-      - 8.8.8.8
+      - "{{ dns01 }}"
+      - "{{ dns02 }}"
       #domain: my_domain
-      password: password
+      password: "{{ password }}"
       runonce:
         #commandList:
           ## Si no funciona simplemente quitar commandlist y dejar la lista por debajo de runonce

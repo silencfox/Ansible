@@ -27,9 +27,3 @@ collections:
     version: 1.0.0
   - name: fortinet.fortimanager
     version: 2.7.0
-
-  - name: cyberark.pas
-    version: 1.0.27
-
-  - name: cyberark.conjur
-    version: 1.3.0

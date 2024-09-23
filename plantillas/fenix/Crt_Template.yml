@@ -1,0 +1,11 @@
+---
+- name: Convertir VM a template en VMware vSphere
+  vmware_guest:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: '{{ vcenter_validate_certs }}'
+    datacenter: "{{ vcenter_datacenter }}"
+    folder: "{{ folder_tpl }}"
+    name: "{{ name_tpl }}"
+    is_template: yes

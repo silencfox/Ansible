@@ -21,6 +21,7 @@ LABEL maintainer="Kelvin Alcala. <kelvin.ag89@gmail.com>" \
       org.label-schema.description="Ansible on alpine docker image" \
       org.label-schema.schema-version="1.0"
 
+#COPY entrypoint /usr/bin/entrypoint.sh
 COPY ./plantillas /ansible/plantillas/
 COPY ./config /etc/ansible/
 COPY ./config/pip.conf /etc/pip.conf
@@ -31,15 +32,17 @@ RUN apk --update --no-cache add --virtual \
         openssh-client \
         openssl \
         python3\
+        py3-pip \
+#        py3-cryptography \
         rsync \
         sshpass \
         bash \
         vim \
         nano \
+        curl \
         wget 
 RUN apk --update add --virtual \
         .build-deps \
-        py3-pip \		
         python3-dev \
         libffi-dev \
         openssl-dev \
@@ -50,16 +53,16 @@ RUN apk --update add --virtual \
  && python3 -m venv /usr/local --system-site-packages \
  && pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org -r /etc/ansible/requirements.txt \
  && ansible-galaxy collection install -r /etc/ansible/requirements.yml --ignore-certs \
-# && pip3 install -r ~/.ansible/collections/ansible_collections/community/vmware/requirements.txt \
+ && pip3 install -r ~/.ansible/collections/ansible_collections/community/vmware/requirements.txt \
  && pip3 install --upgrade pip \
  && rm -rf /var/cache/apk/* \
  && apk upgrade --available && sync \
  && apk del \
         .build-deps \
-		curl \
+		py3-pip \
  && apk cache clean \
  && mkdir -p /etc/ansible \
- && echo 'localhost ansible_connection=local' > /etc/ansible/hosts \
+ #&& echo 'localhost ansible_connection=local' > /etc/ansible/hosts \
  && echo -e """\
 \n\
 Host *\n\
@@ -67,7 +70,7 @@ Host *\n\
     UserKnownHostsFile=/dev/null\n\
 """ >> /etc/ssh/ssh_config
 
-
+#RUN python -m pip install --upgrade pip
 #RUN pip3 install ansible-lint==${ANSIBLE_LINT_VERSION}
 
 #RUN chmod +x /usr/bin/entrypoint.sh \
@@ -78,8 +81,8 @@ WORKDIR /ansible
 #ENTRYPOINT ["entrypoint.sh"]
 
 # default command: display Ansible version
-CMD [ "ansible-playbook", "--version" ]
-#CMD ["/bin/sh"]
+#CMD [ "ansible-playbook", "--version" ]
+CMD ["/bin/sh"]
 
 ##	Probar SDK Pure Storage
 ##  python3 -c "import purestorage"

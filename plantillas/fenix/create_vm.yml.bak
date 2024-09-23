@@ -1,0 +1,41 @@
+---
+- name: Execute multiple playbooks
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  pre_tasks:
+    - include_vars: ../vcenter/vars.yml
+
+  tasks:
+
+    - name: Clone a virtual machine from Windows template and customize
+      include: clone.yml
+      vars:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: '{{ vcenter_validate_certs }}'
+        datacenter: "{{ vcenter_datacenter }}"
+        datastore_name: 'DS_FAC_DEVQA_08'
+        tpl_folder: "/LAB"
+        vm_folder: "/LAB"
+        #guest_template: "mi_vm"
+        vm_name_src: "TMPWIN2K22T"
+        vm_name_dst: "new_vm_ansible"     
+        vm_cpus: "1"
+        vm_memory_mb: 1024
+        vlan_name: "VL_QA_USR"
+        guest_networks:
+          - label: "VL_QA_USR"
+            vlan: "0"
+        ip: 10.0.0.5
+        netmask: 255.255.255.0
+        gateway: 10.0.0.1            
+        dns01: 8.8.8.8            
+        dns02: 8.8.4.4
+        winhostname: 'WebServer'
+        orgname: 'BSC'
+        joinworkgroup: 'BSC_Group'    
+        autologon: yes
+        autologoncount: 1
+        password: password

@@ -1,0 +1,40 @@
+FROM silencfox/ansible:latest
+
+RUN mkdir /etc/ansible/roles
+COPY entrypoint /usr/bin/entrypoint.sh
+COPY ./plantillas /ansible/plantillas/
+#COPY ./inventario/hosts /etc/ansible/hosts
+#COPY ./inventario/inventory.vmware.yml /etc/ansible/inventory.vmware.yml
+COPY ./config/ansible.cfg /etc/ansible/ansible.cfg
+COPY ./config/requirements.txt /etc/ansible/requirements.txt 
+COPY ./config/requirements.yml /etc/ansible/requirements.yml 
+COPY ./tools/ansible-windows-2.5.0.tar.gz /ansible/ansible-windows-2.5.0.tar.gz
+COPY ./tools/vmware-vmware_rest-4.0.1.tar.gz /ansible/vmware-vmware_rest-4.0.1.tar.gz
+COPY ./tools/vmware-vmware-1.5.0.tar.gz /ansible/vmware-vmware-1.5.0.tar.gz
+COPY ./config/pip.conf /etc/pip.conf
+
+RUN apk update
+RUN apk upgrade
+#RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --upgrade ansible
+RUN pip install --upgrade ansible
+#RUN apk add ca-certificates
+#RUN python3 -m pip config debug
+#ansible-config view
+
+#RUN ansible-galaxy install /root/ansible-windows-2.5.0.tar.gz --force --ignore-certs
+#RUN ansible-galaxy install /root/vmware-vmware_rest-4.0.1.tar.gz  --force --ignore-certs
+#RUN ansible-galaxy install /root/vmware-vmware-1.5.0.tar.gz --force --ignore-certs
+
+
+
+
+WORKDIR /ansible
+
+ENTRYPOINT ["entrypoint.sh"]
+
+# default command: display Ansible version
+#CMD [ "ansible-playbook", "--version" ]
+CMD ["/bin/sh"]
+
+
+

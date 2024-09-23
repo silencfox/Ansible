@@ -1,0 +1,5 @@
+---
+- name: Ejecutar comando de PowerShell
+  win_shell: |
+    Get-Process | Sort-Object CPU -Descending | Select-Object -First 5
+    New-Item -Path 'C:\' -Name 'autonomo5.txt' -ItemType 'file' -Value 'This is a text create from ansible.'  

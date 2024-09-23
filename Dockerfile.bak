@@ -36,6 +36,7 @@ RUN apk --update --no-cache add --virtual \
         bash \
         vim \
         nano \
+        curl \
         wget 
 RUN apk --update add --virtual \
         .build-deps \
@@ -56,7 +57,6 @@ RUN apk --update add --virtual \
  && apk upgrade --available && sync \
  && apk del \
         .build-deps \
-		curl \
  && apk cache clean \
  && mkdir -p /etc/ansible \
  && echo 'localhost ansible_connection=local' > /etc/ansible/hosts \
@@ -66,6 +66,8 @@ Host *\n\
     StrictHostKeyChecking no\n\
     UserKnownHostsFile=/dev/null\n\
 """ >> /etc/ssh/ssh_config
+
+
 
 
 #RUN pip3 install ansible-lint==${ANSIBLE_LINT_VERSION}

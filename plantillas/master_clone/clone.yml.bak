@@ -38,8 +38,8 @@
       connected: true  
     customization:
       hostname: 'WebServer'
-      orgname: 'JD3'
-      joinworkgroup: 'JD3_Group'    
+      orgname: 'BSC'
+      joinworkgroup: 'BSC_Group'    
       autologon: yes
       autologoncount: 1
       dns_servers:

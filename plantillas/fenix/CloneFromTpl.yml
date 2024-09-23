@@ -1,0 +1,70 @@
+---
+- name: Generate network config dynamically
+  vars:
+    num_nics: "{{ num_nics }}"  # Número de tarjetas de red
+    network_name: "VL_DEVQA_HOSTONLY"  # Nombre de la red
+  set_fact:
+    network_config: >
+      {%- set config = [] -%}
+      {%- for i in range(num_nics|int) -%}
+      {%- set _ = config.append({
+          'name': vlan_name,
+          'ip': '10.0.0.5',
+          'netmask': '255.255.255.0',
+          'gateway': '10.0.0.1',
+          'device_type': 'vmxnet3',
+          'type': 'static',
+          'connected': false
+        }) -%}
+      {%- endfor -%}
+      {{ config }}
+      
+- name: Clone a virtual machine from Windows template and customize
+  ignore_errors: yes
+  community.vmware.vmware_guest:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: '{{ vcenter_validate_certs }}'
+    datacenter: "{{ vcenter_datacenter }}"
+    esxi_hostname: "{{ vmware_host01 }}"
+    folder: "{{ vm_folder }}"
+    name: "{{ vm_name_dst }}"
+    template: "{{ vm_name_src }}"
+    #state: poweredon
+    datastore: "{{ datastore_name }}"
+    convert: thin  
+    hardware:
+      memory_mb: '{{ vm_memory_mb }}'
+      num_cpus: '{{ vm_cpus }}'
+      scsi: paravirtual 
+    networks: "{{ network_config }}"
+#    - name: '{{ vlan_name }}'
+#      ip: 10.0.0.5
+#      netmask: 255.255.255.0
+#      gateway: 10.0.0.1
+#      mac: aa:bb:dd:aa:00:14
+#      #domain: my_domain
+#      dns_servers:
+#      - 10.0.0.1
+#      - 8.8.8.8
+#      type: static
+#      device_type: 'vmxnet3'
+#      connected: false 
+    customization:
+      hostname: "{{ winhostname }}"
+      orgname: '{{ orgname }}'
+      joinworkgroup: '{{ joinworkgroup }}'    
+      autologon: '{{ autologon }}'
+      autologoncount: '{{ autologoncount }}'
+      password: "{{ password }}"
+      runonce:
+        - powershell.exe -ExecutionPolicy Bypass -Command "Enable-PSRemoting -Force"
+        - powershell.exe -ExecutionPolicy Bypass -Command "Set-WSManQuickConfig -Force"
+        - powershell.exe -ExecutionPolicy Bypass -Command "Set-Item WSMan:\localhost\Shell\MaxMemoryPerShellMB 1024"
+        - powershell.exe -ExecutionPolicy Bypass -Command "Set-Item WSMan:\localhost\Service\AllowUnencrypted -Value $True"
+        - powershell.exe -ExecutionPolicy Unrestricted -Command "& New-Item -Path 'C:\' -Name 'autonomo.txt' -ItemType 'file' -Value 'This is a text created from ansible.'"
+        - powershell.exe -ExecutionPolicy Unrestricted -Command "& New-Item -Path 'C:\' -Name 'autonomo2.txt' -ItemType 'file' -Value 'This is a text created from ansible.'"
+        - powershell.exe -ExecutionPolicy Unrestricted -File C:\Windows\Temp\ConfigureRemotingForAnsible.ps1 -ForceNewSSLCert -EnableCredSSP
+  delegate_to: localhost
+

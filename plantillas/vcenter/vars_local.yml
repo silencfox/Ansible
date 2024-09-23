@@ -2,8 +2,8 @@ vcenter_hostname: "10.0.0.103"
 vcenter_datacenter: "Datacenter"
 vcenter_cluster: "CL_01"
 vcenter_validate_certs: false
-vcenter_username: "administrator@vsphere.local"
-vcenter_password: "administrator"
+vcenter_username: ""
+vcenter_password: ""
 
 vmware_host01: "10.0.0.101"
 inventory_hostname: "10.0.0.101"

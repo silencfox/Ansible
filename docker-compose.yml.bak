@@ -8,7 +8,7 @@ services:
         BUILD_DATE: 'date -u +”%Y-%m-%dT%H:%M:%SZ”'
         ANSIBLE_VERSION: "10.4.0"
         ANSIBLE_LINT_VERSION: "24.9.2"
-        MITOGEN_VERSION: "0.3.10"
+        MITOGEN_VERSION: "0.3.9"
         IMAGE_NAME: "silencfox/ansible:7.5"
     container_name: ansible
     hostname: ansible       

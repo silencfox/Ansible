@@ -1,0 +1,18 @@
+---
+- name: Execute multiple playbooks
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  pre_tasks:
+    - include_vars: ../vcenter/vars.yml
+  
+  tasks:
+    - name: Obtener detalles de todos los hosts del clúster
+      community.vmware.vmware_host_facts:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: '{{ vcenter_validate_certs }}'
+      register: host_info
+
+
