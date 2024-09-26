@@ -29,15 +29,38 @@ COPY ./config /etc/ansible/
 COPY ./config/pip.conf /etc/pip.conf
 COPY ./entrypoint.sh /usr/bin/entrypoint.sh
 
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/v$(cut -d. -f1-2 < /etc/alpine-release)/community" >> /etc/apk/repositories
+
+
+# Install dependencies and download glibc from the community repository
+RUN apk add --no-cache \
+    less \
+    ncurses-terminfo-base \
+    krb5-libs \
+    libgcc \
+    libstdc++ \
+    libintl \
+    tzdata \
+    curl \
+    icu-libs \
+    krb5 \
+    lttng-ust \
+    openssl \
+    unzip \
+    bash \
+    && curl -Lo /etc/apk/keys/sgerrand.rsa.pub -k https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
+    && curl -Lo glibc.apk -k https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.35-r0/glibc-2.35-r0.apk 
+#    && apk add glibc.apk \
+#    && rm glibc.apk
+
+
 RUN apk --update --no-cache add --virtual \
         ca-certificates \
         git \
         openssh-client \
-        openssl \
         python3\
         rsync \
         sshpass \
-        bash \
         vim \
         nano \
         wget \
@@ -49,6 +72,7 @@ RUN apk --update --no-cache add --virtual \
         openssl-dev \
         build-base \
         curl \
+		tar \
  && chmod +x /usr/bin/entrypoint.sh \
  && chmod 777 -R /usr/bin/entrypoint.sh \       
  && if [ ! -z "${MITOGEN_VERSION+x}" ]; then curl -s -L https://github.com/mitogen-hq/mitogen/archive/refs/tags/v${MITOGEN_VERSION}.tar.gz | tar xzf - -C /opt/ \
@@ -77,7 +101,17 @@ Host *\n\
 #RUN pip3 install ansible-lint==${ANSIBLE_LINT_VERSION}
 
 
+# Download and install PowerShell
+RUN curl -Lk  https://github.com/PowerShell/PowerShell/releases/download/v7.2.6/powershell-7.2.6-linux-alpine-x64.tar.gz -o /tmp/powershell.tar.gz \
+    && mkdir -p /opt/microsoft/powershell/7 \
+    && tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
+    && ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh \
+    && rm /tmp/powershell.tar.gz
 
+
+# Optionally, install VMware PowerCLI via PowerShell
+RUN pwsh -Command "Install-Module -Name VMware.PowerCLI -Force -AllowClobber -Scope AllUsers"
+RUN pwsh -command "Import-Module VMware.PowerCLI"
 
 
 #ENTRYPOINT ["/bin/sh","/usr/bin/entrypoint.sh"]
