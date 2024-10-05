@@ -1,0 +1,16 @@
+---
+- name: Ejecutar script de PowerShell en VM huésped
+  hosts: localhost
+  gather_facts: no
+  pre_tasks:
+    - include_vars: ./vars.yml
+    - include_vars: ./commands.txt
+  tasks:
+    - name: Ejecutar script de PowerShell
+      ansible.builtin.shell: |
+        pwsh -File /ansible/plantillas/vcenter/run_script.ps1 -vcenter_hostname '{{ vcenter_hostname }}' -vcenter_username '{{ vcenter_username }}' -vcenter_password '{{ vcenter_password }}' -vmName "SRVIACIBWEB01" -scriptText "{{ script_content }}" -guestUser "{{ GuestUser }}" -guestPassword "{{ GuestPassword }}"
+      register: script_result
+
+    - name: Mostrar resultado
+      debug:
+        var: script_result

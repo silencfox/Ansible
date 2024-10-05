@@ -1,0 +1,25 @@
+---
+- name: Conectar a vCenter sin verificación SSL desde Linux usando pwsh
+  hosts: localhost
+  pre_tasks:
+    - include_vars: ./vars.yml
+  tasks:
+    - name: Ejecutar PowerCLI sin SSL
+      shell: |
+        pwsh -Command "
+        Set-PowerCLIConfiguration -InvalidCertificateAction Ignore -Confirm:\$false
+        #Set-PowerCLIConfiguration -ParticipateInCEIP $false -Confirm:$false
+        Connect-VIServer -Server '{{ vcenter_hostname }}' -User '{{ vcenter_username }}' -Password '{{ vcenter_password }}' -Force
+        Get-VM | Select-Object -ExpandProperty Name
+        "
+      args:
+        executable: /usr/bin/pwsh
+      register: vm_list
+
+    - name: Limpiar códigos ANSI y dividir en líneas
+      set_fact:
+        vm_lines: "{{ vm_list.stdout | regex_replace('\\u001b\\[[0-9;]*m', '') | split('\n') }}"
+
+    - name: Mostrar el listado completo de las VMs
+      debug:
+        msg: "{{ vm_lines | map('trim') | list }}"

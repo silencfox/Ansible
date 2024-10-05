@@ -14,4 +14,8 @@ docker run -it --rm \
   silencfox/ansible:latest \
   ansible-playbook --version
 
-  docker run -it --rm -v ${PWD}:/ansible cc6c024dcc95 /bin/bash
+docker run -it --rm -v ${PWD}:/ansible cc6c024dcc95 /bin/bash
+
+
+pip3 install -r ~/.ansible/collections/ansible_collections/community/vmware/requirements.txt
+

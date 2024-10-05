@@ -1,0 +1,4 @@
+script_content: |
+  # Aquí puedes poner el script de PowerShell que deseas ejecutar
+  Get-Process
+  New-Item -ItemType Directory -Path "C:\\tools\\nuevo2\\new6" -Force
