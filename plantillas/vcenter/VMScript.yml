@@ -1,0 +1,32 @@
+- name: Ejecutar script de PowerShell en VM huésped
+  hosts: localhost
+  gather_facts: no
+  pre_tasks:
+    - include_vars: ./vars.yml
+  vars:
+    vmname: "VMNAME TEST"
+    script_content: |
+      # Aquí puedes poner el script de PowerShell que deseas ejecutar
+      Get-Process
+      New-Item -ItemType Directory -Path "C:\\tools\\nuevo2\\new6" -Force
+
+  tasks:
+    - name: Ejecutar script de PowerShell
+      ansible.builtin.shell: |
+        pwsh -Command "
+          # Conéctate a vCenter
+          Set-PowerCLIConfiguration -InvalidCertificateAction Ignore -Confirm:\$false
+          Connect-VIServer -Server '{{ vcenter_hostname }}' -User '{{ vcenter_username }}' -Password '{{ vcenter_password }}' -Force -verbose
+
+          # Ejecuta el script en la VM
+          Invoke-VMScript -VM '{{ vmname }}' -ScriptText '{{ script_content }}' -GuestUser '{{ GuestUser }}' -GuestPassword '{{ GuestPassword }}'
+
+          # Desconéctate de vCenter
+          Disconnect-VIServer -Confirm:\$false
+        "
+      register: script_result
+
+    - name: Mostrar resultado
+      debug:
+        var: script_result
+
