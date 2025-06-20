@@ -1,9 +1,29 @@
-plugin: vmware_vm_inventory
-strict: False
-hostname: 10.0.0.101
-username: 
-password: 
-validate_certs: False
-with_tags: False
+plugin: vmware.vmware.vms
+hostname: 10.65.223.31
+username: administrator@vsphere.local
+password: Esxi@123$%
+validate_certs: false
+gather_tags: true
+# customizing hostnames based on VM's FQDN. The second hostnames template acts as a fallback mechanism.
+
+hostnames:
+  - 'config.name+"."+guest.ipStack.0.dnsConfig.domainName'
+  - 'config.name'
+properties:
+  - 'config.name'
+  - 'config.guestId'
+  - 'guest.hostName'
+  - 'guest.ipAddress'
+  - 'guest.guestFamily'
+  - 'guest.ipStack
+
+group_by_paths: true
 groups:
-  VMs: True
+  cpu_hot_add_enabled: config.cpuHotAddEnabled
+keyed_groups:
+  - key: guest.toolsStatus
+    separator: ""
+  - key: guest.toolsRunningStatus
+    separator: ""
+
+# https://docs.ansible.com/ansible/latest/collections/vmware/vmware/vms_inventory.html#examples

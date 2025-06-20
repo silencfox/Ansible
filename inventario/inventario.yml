@@ -1,0 +1,19 @@
+all:
+  hosts:
+    docker_vm:
+      ansible_host: 192.168.1.100
+      ansible_user: root
+      ansible_ssh_pass: TuPassword
+      ansible_become_pass: TuPassword
+    windowsvm:
+      ansible_host: 192.168.1.105
+      ansible_user:  "{{user}}"
+      ansible_password: "{{password}}"
+      ansible_connection: winrm
+      ansible_port: 5986
+      ansible_winrm_transport: ntlm
+      ansible_winrm_server_cert_validation: ignore
+  children:
+    grupo_servidores:
+      hosts:
+        docker_vm:

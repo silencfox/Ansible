@@ -1,0 +1,36 @@
+#plugin: vmware_vm_inventory
+plugin: vmware.vmware.vms
+#vcenter_hostname: ''   # Dirección IP o FQDN de tu vCenter
+hostname: ''   # Dirección IP o FQDN de tu vCenter
+username: ''         # Usuario con permisos de lectura en vCenter
+password: ''      # Contraseña para ese usuario
+validate_certs: False               # Establecer en True si tienes un certificado válido
+cluster_name: 'CLT_DEVQA'  # Opcional: filtra por un clúster específico
+datacenter_name: 'LOV_DEVQA'  # Opcional: filtra por un datacenter específico
+with_tags: true
+
+gather_tags: true
+# customizing hostnames based on VM's FQDN. The second hostnames template acts as a fallback mechanism.
+
+hostnames:
+  - 'config.name+"."+guest.ipStack.0.dnsConfig.domainName'
+  - 'config.name'
+properties:
+  - 'config.name'
+  - 'config.guestId'
+  - 'guest.hostName'
+  - 'guest.ipAddress'
+  - 'guest.guestFamily'
+  - 'guest.ipStack
+
+group_by_paths: true
+groups:
+  cpu_hot_add_enabled: config.cpuHotAddEnabled
+keyed_groups:
+  - key: guest.toolsStatus
+    separator: ""
+  - key: guest.toolsRunningStatus
+    separator: ""
+
+# https://docs.ansible.com/ansible/latest/collections/vmware/vmware/vms_inventory.html#examples
+

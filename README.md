@@ -1,12 +1,13 @@
 # Docker-Ansible base image
 
-![Pipeline](https://gitlab.com/pad92/docker-ansible-alpine/badges/master/pipeline.svg)
-![version](https://img.shields.io/docker/v/pad92/ansible-alpine?sort=semver)
-[![Docker Pulls](https://img.shields.io/docker/pulls/pad92/ansible-alpine)](https://hub.docker.com/r/pad92/ansible-alpine/)
-![Docker Image Size](https://img.shields.io/docker/image-size/pad92/ansible-alpine/latest)
-![Docker Stars](https://img.shields.io/docker/stars/pad92/ansible-alpine)
+
 ## Usage
 
+####  Manual install
+### Download all requiriment without install
+python3 -m pip download -r requirements.txt --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --dest ./
+### Install all requiriment 
+python3 -m pip install --no-index --find-links=/azure/ansible/requeriments/ -r requirements.txt
 ### Environnement variable
 
 | Variable             | Default Value    | Usage                                       |
@@ -21,6 +22,7 @@ To enable mitogen, add this configuration into defaults in ansible.cfg file
 
 ```cfg
 [defaults]
+action_plugins = ~/.ansible/plugins/action:/usr/share/ansible/plugins/action
 strategy_plugins = /usr/lib/python3.11/site-packages/ansible_mitogen/plugins/strategy
 strategy = mitogen_linear
 ```

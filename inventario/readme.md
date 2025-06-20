@@ -1,0 +1,1 @@
+aqui van los archivos de inventario *.ini o *.yml

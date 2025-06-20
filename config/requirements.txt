@@ -9,3 +9,5 @@ py-pure-client
 jmespath
 cryptography
 ansible-lint
+packaging
+ansible-lint

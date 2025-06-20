@@ -1,32 +1,86 @@
 ---
 collections:
   - name: purestorage.flasharray
-    version: 1.31.1
-  #- name: purestorage.flashblade
-  #  version: 1.11.0
+    version: 1.34.1       # última versión estable, publicada hace ~2 meses :contentReference[oaicite:1]{index=1}
+
+  - name: purestorage.flashblade
+    version: 1.11.0       # comentada, descomenta si usas FlashBlade
+
   - name: community.vmware
-    version: 5.0.0
-  - name: vmware.vmware_rest
-    version: 4.1.0
+    version: 5.7.0        # última versión de community.vmware :contentReference[oaicite:2]{index=2}
+
   - name: vmware.vmware
-    version: 1.5.0
+    version: 1.10.1       # versión oficial compatible
+
+  - name: vmware.vmware_rest
+    version: 4.6.0        # comentada, descomenta si usas vmware_rest
+
   - name: community.windows
-    version: 2.3.0
+    version: 2.4.0
+
   - name: ansible.windows
-    version: 2.5.0
+    version: 2.8.0
+
   - name: community.general
-    version: 9.4.0
+    version: 11.0.0       # última versión disponible :contentReference[oaicite:3]{index=3}
+
   - name: chocolatey.chocolatey
-    version: 1.5.1
+    version: 1.5.3
+
   - name: community.azure
     version: 2.0.0
+
+  - name: azure.azcollection
+    version: 3.3.1        # comentada, alternativa oficial de Azure
+
   - name: community.aws
-    version: 8.0.0
+    version: 10.0.0       # última versión estable hace ~1 mes :contentReference[oaicite:4]{index=4}
+
+  - name: amazon.aws
+    version: 10.0.0       # comentada, alternativa oficial mantenida por Amazon
+
+  - name: amazon.cloud
+    version: 0.4.0        # comentada
+
   - name: community.google
     version: 1.0.0
+
   - name: fortinet.fortimanager
-    version: 2.7.0
+    version: 2.9.1        # comentadas, descomenta si las usas
+  - name: fortinet.console
+    version: 0.2.2
+  - name: fortinet.fortianalyzer
+    version: 1.8.1
+
   - name: cyberark.pas
     version: 1.0.27
   - name: cyberark.conjur
     version: 1.3.0
+
+  - name: keepersecurity.keeper_secrets_manager
+    version: 1.2.4
+
+  - name: dynatrace.event_driven_ansible
+    version: 1.2.2
+  - name: dynatrace.oneagent
+    version: 1.2.4
+
+
+  - name: ansible.posix
+#    version: 2.0.0
+  - name: microsoft.iis
+#    version: 1.0.2
+  - name: ansible.network
+
+  - name: ibm.power_ibmi
+
+#  - name: ibm.ibm_zos_core
+#  - name: ibm.ibm_zos_cics
+#  - name: ibm.zos_ims
+#  - name: ibm.ibm_zos_sysauto
+
+#  - name: ibm.storage_virtualize
+
+#  - name: ibm.cloudcollection
+
+#  - name: ibm.mas_devops

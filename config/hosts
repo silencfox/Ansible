@@ -1,0 +1,10 @@
+localhost ansible_connection=local
+[web]
+192.168.1.10
+192.168.1.11
+[db]
+192.168.1.12
+[modem]
+10.0.0.1
+[kalcala]
+10.0.0.206

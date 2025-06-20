@@ -1,4 +1,6 @@
-FROM alpine:latest
+FROM node:current-alpine
+#FROM alpine:latest
+
 
 # Metadata params
 ARG BUILD_DATE
@@ -8,6 +10,7 @@ ARG MITOGEN_VERSION
 ARG VCS_REF
 
 # Metadata
+LABEL "com.azure.dev.pipelines.agent.handler.node.path"="/usr/local/bin/node"
 LABEL maintainer="Kelvin Alcala. <kelvin.ag89@gmail.com>" \
       org.label-schema.url="https://github.com/silencfox/Ansible/blob/main/README.md" \
       org.label-schema.build-date=${BUILD_DATE} \
@@ -24,11 +27,15 @@ LABEL maintainer="Kelvin Alcala. <kelvin.ag89@gmail.com>" \
 WORKDIR /ansible 
 #RUN mkdir -p /ansible
 
-COPY ./plantillas /ansible/plantillas/
+#COPY ./plantillas /ansible/plantillas/
 COPY ./config /etc/ansible/
 COPY ./config/pip.conf /etc/pip.conf
 COPY ./entrypoint.sh /usr/bin/entrypoint.sh
 
+RUN apk add --no-cache --virtual .pipeline-deps readline linux-pam \
+  && apk add bash sudo shadow \
+  && apk del .pipeline-deps
+  
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/v$(cut -d. -f1-2 < /etc/alpine-release)/community" >> /etc/apk/repositories \
 # Install dependencies and download glibc from the community repository
  && apk add --no-cache \
@@ -61,7 +68,7 @@ RUN apk --update --no-cache add --virtual \
         vim \
         nano \
         wget \
-  && apk --update add --virtual \
+ && apk --update add --virtual \
         .build-deps \
         py3-pip \		
         python3-dev \
@@ -69,18 +76,16 @@ RUN apk --update --no-cache add --virtual \
         openssl-dev \
         build-base \
         curl \
-		tar \
- && chmod +x /usr/bin/entrypoint.sh \
+        tar 
+RUN chmod +x /usr/bin/entrypoint.sh \
  && chmod 777 -R /usr/bin/entrypoint.sh \       
  && if [ ! -z "${MITOGEN_VERSION+x}" ]; then curl -s -L https://github.com/mitogen-hq/mitogen/archive/refs/tags/v${MITOGEN_VERSION}.tar.gz | tar xzf - -C /opt/ \
  && mv /opt/mitogen-* /opt/mitogen; fi \
  && python3 -m venv /usr/local --system-site-packages \
- && pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org -r /etc/ansible/requirements.txt \
- && ansible-galaxy collection install -r /etc/ansible/requirements.yml --ignore-certs \
- && pip3 install -r ~/.ansible/collections/ansible_collections/community/vmware/requirements.txt \
+# && pip3 install -r ~/.ansible/collections/ansible_collections/community/vmware/requirements.txt \
  && pip3 install --upgrade pip \
- && rm -rf /var/cache/apk/* \
- && apk upgrade --available && sync \
+ && rm -rf /var/cache/apk/*
+RUN apk upgrade --available && sync \
  && apk del \
         .build-deps \
 		#curl \
@@ -94,27 +99,30 @@ Host *\n\
     UserKnownHostsFile=/dev/null\n\
 """ >> /etc/ssh/ssh_config
 
-
-#RUN pip3 install ansible-lint==${ANSIBLE_LINT_VERSION}
+RUN pip3 install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org -r /etc/ansible/requirements.txt
+RUN ansible-galaxy collection install -r /etc/ansible/requirements.yml --ignore-certs -vvv
 
 
 # Download and install PowerShell
 RUN curl -Lk  https://github.com/PowerShell/PowerShell/releases/download/v7.2.6/powershell-7.2.6-linux-alpine-x64.tar.gz -o /tmp/powershell.tar.gz \
+#RUN curl -Lk  https://github.com/PowerShell/PowerShell/releases/download/v7.6.0-preview.4/powershell-7.6.0-preview.4-linux-musl-x64.tar.gz -o /tmp/powershell.tar.gz \
     && mkdir -p /opt/microsoft/powershell/7 \
     && tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
     && ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh \
     && rm /tmp/powershell.tar.gz \
 # Optionally, install VMware PowerCLI via PowerShell
-	&& pwsh -Command "Install-Module -Name VMware.PowerCLI -Force -AllowClobber -Scope AllUsers" \
-	&& pwsh -command "Import-Module VMware.PowerCLI" \
-	&&pwsh -command Set-PowerCLIConfiguration -scope AllUsers -ParticipateInCEIP \$false -Confirm:\$false -DisplayDeprecationWarnings \$false
+	&& pwsh -Command "Install-Module -Name VMware.PowerCLI -Force -AllowClobber -Scope AllUsers" 
+	#&& pwsh -command "Import-Module VMware.PowerCLI" \
+	#&& pwsh -command "Import-Module VMware.VimAutomation.Core" \
+	#&&pwsh -command Set-PowerCLIConfiguration -scope AllUsers -ParticipateInCEIP \$false -Confirm:\$false -DisplayDeprecationWarnings \$false
 	#Set-PowerCLIConfiguration -scope AllUsers -ParticipateInCEIP $false -Confirm:$false -DisplayDeprecationWarnings \$false
 
 
 #ENTRYPOINT ["/bin/sh","/usr/bin/entrypoint.sh"]
 
 # default command: display Ansible version
-CMD [ "ansible-playbook", "--version" ]
+#CMD [ "ansible-playbook", "--version" ]
+CMD [ "node" ]
 #CMD ["/bin/sh"]
 
 ##	Probar SDK Pure Storage
